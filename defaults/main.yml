@@ -1,2 +1,28 @@
 ---
 # defaults file for serverdns
+serverdns_files_dir: "{{ role_path }}/files"
+serverdns_templates_dir: "{{ role_path }}/templates"
+serverdns_vars_dir: "{{ role_path }}/vars"
+serverdns_config_dir: "/etc/bind"
+serverdns_config_file: "{{ serverdns_config_dir }}/named.conf"
+serverdns_software: "bind9"
+serverdns_packages: []
+# - bind9
+serverdns_cache_data: "/var/bind/named.cache"
+serverdns_config: {}
+#  config_path:
+serverdns_zones_default:
+  - name: "."
+    options:
+      type: "hint"
+      file: "{{ serverdns_cache_data }}"
+  - name: "localhost"
+    options:
+      type: "master"
+      file: "pri/localhost.zone"
+      notify: "no"
+  - name: "127.in-addr.arpa"
+    options:
+      type: "master"
+      file: "pri/127.zone"
+      notify: "no"

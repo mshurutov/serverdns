@@ -1,0 +1,38 @@
+/* BIND9 DNS server config is managed by ansible
+ * Don't edit it manually
+ *
+ * Refer to the named.conf(5) and named(8) man pages, and the documentation
+ * in /usr/share/doc/bind-* for more details.
+ * Online versions of the documentation can be found here:
+ * https://kb.isc.org/article/AA-01031
+ *
+ * If you are going to set up an authoritative server, make sure you
+ * understand the hairy details of how DNS works. Even with simple mistakes,
+ * you can break connectivity for affected parties, or cause huge amounts of
+ * useless Internet traffic.
+ */
+{% for blck in bind9_config_blocks %}
+
+{{ blck.name }} {
+{% if blck.name == "acl" %}
+{% elif blck.name == "controls" %}
+{% elif blck.name == "dnssec-policy" %}
+{% elif blck.name == "key" %}
+{% elif blck.name == "key-store" %}
+{% elif blck.name == "logging" %}
+{% elif blck.name == "masters" or blck.name == "primaries" %}
+{% elif blck.name == "options" %}
+{% elif blck.name == "parental-agents" %}
+{% elif blck.name == "server" %}
+{% elif blck.name == "statistics-channels" %}
+{% elif blck.name == "tls" %}
+{% elif blck.name == "http" %}
+{% elif blck.name == "trust-anchors" %}
+{% elif blck.name == "managed-keys" %}
+{% elif blck.name == "view" %}
+{% elif blck.name == "zone" %}
+{% else %}
+This is unknown {{ blck.name }}.
+{% endif %}
+}
+{% endfor %}

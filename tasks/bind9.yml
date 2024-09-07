@@ -1,0 +1,6 @@
+---
+- name: Copy config
+  ansible.builtin.template:
+    dest: "{{ serverdns_config_file }}"
+    src: "{{ serverdns_templates_dir }}/bind9-named.conf.j2"
+    mode: "0644"

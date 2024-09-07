@@ -1,2 +1,20 @@
 ---
 # tasks file for serverdns
+- name: Set distro independed variables
+  ansible.builtin.include_vars:
+    file: "{{ serverdns_vars_dir }}/main.yml"
+  tags: serverdns_setvars
+
+- name: Install packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ serverdns_packages }}"
+  tags: serverdns_install
+
+- name: Configure DNS server
+  block:
+    - name: Configure BIND9 DNS server
+      ansible.builtin.include_tasks: "bind9.yml"
+      when: serverdns_software == "bind9"
+      tags: bind9_configure
