@@ -1,20 +1,46 @@
 ---
 # tasks file for serverdns
 - name: Set distro independed variables
+  become: true
+  become_user: root
+  tags:
+    - serverdns_install
   ansible.builtin.include_vars:
     file: "{{ serverdns_vars_dir }}/main.yml"
-  tags: serverdns_setvars
+
+# Package cache should be updated before install
+# packages by apt and apt+rpm package managers
+# Update apt cache
+- name: Update package manager cache for apt
+  become: true
+  become_user: root
+  when: ansible_pkg_mgr == "apt"
+  tags: serverdns_install
+  ansible.builtin.apt:
+    update_cache: true
+# Update apt+rpm cache
+- name: Update package manager cache for apt+rpm
+  become: true
+  become_user: root
+  when: ansible_pkg_mgr == "apt_rpm"
+  tags: serverdns_install
+  community.general.apt_rpm:
+    update_cache: true
 
 - name: Install packages
+  become: true
+  become_user: root
+  tags: serverdns_install
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ serverdns_packages }}"
-  tags: serverdns_install
 
 - name: Configure DNS server
+  become: true
+  become_user: root
   block:
     - name: Configure BIND9 DNS server
-      ansible.builtin.include_tasks: "bind9.yml"
+      ansible.builtin.import_tasks: "bind9.yml"
       when: serverdns_software == "bind9"
       tags: bind9_configure

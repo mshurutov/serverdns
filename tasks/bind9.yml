@@ -1,5 +1,15 @@
 ---
+- name: Check if config dirs exist
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('named') }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ bind9_config_dirs }}"
+  
 - name: Copy config
+  become: true
+  become_user: root
   ansible.builtin.template:
     dest: "{{ serverdns_config_file }}"
     src: "{{ serverdns_templates_dir }}/bind9-named.conf.j2"

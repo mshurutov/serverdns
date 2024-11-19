@@ -3,19 +3,68 @@
 serverdns_files_dir: "{{ role_path }}/files"
 serverdns_templates_dir: "{{ role_path }}/templates"
 serverdns_vars_dir: "{{ role_path }}/vars"
-serverdns_config_dir: "/etc/bind"
-serverdns_config_file: "{{ serverdns_config_dir }}/named.conf"
 serverdns_software: "bind9"
 serverdns_packages: []
 # - bind9
-serverdns_cache_data: "/var/bind/named.cache"
-serverdns_config: {}
+bind9_config_dir:
+# "/etc/bind"
+bind9_config_file: "{{ bind9_config_dir }}/named.conf"
+bind9_cache_data: "/var/bind/named.cache"
+# BIND9 config blocks
+bind9_config_acl: {}
+#  - name: deny
+#    values:
+#      - none
+#  - name: allow
+#    values:
+#      - "127.0.0.0/8"
+#      - "10.0.0.0/8"
+#      - "100.64.0.0/10"
+#      - "169.254.0.0/16"
+#      - "172.16.0.0/12"
+#      - "192.168.0.0/16"
+#      - "::1/128"
+bind9_config_controls: {}
+bind9_config_dnssec_policy: {}
+bind9_config_includes: {}
+bind9_config_key: {}
+bind9_config_key_store: {}
+bind9_config_logging: {}
+bind9_config_masters: {}
+bind9_config_options: {}
+bind9_config_parental_agents: {}
+bind9_config_primaries: {}
+bind9_config_server: {}
+bind9_config_statistics_channels: {}
+bind9_config_tls: {}
+bind9_config_http: {}
+bind9_config_trust_anchors: {}
+bind9_config_managed_keys: {}
+bind9_config_trusted_keys: {}
+bind9_config_view: {}
+bind9_config_zones: {}
+#  acl:
+#    set:
+#      - name1:
+#          - add1
+#          - addr2
+#          ...
+#          - addrN
+#  controls:
+#    include: "/etc/bind/rndc.key"
+#    set:
+#      - listen: "127.0.0.1"
+#        port: 953
+#        allow:
+#          - "127.0.0.1/32"
+#          - "::1/128"
+#        keys: "rndc-key"
 #  config_path:
-serverdns_zones_default:
+bind9_zones_default:
   - name: "."
     options:
       type: "hint"
-      file: "{{ serverdns_cache_data }}"
+      file: "{{ bind9_cache_data }}"
   - name: "localhost"
     options:
       type: "master"

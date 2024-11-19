@@ -5,34 +5,182 @@
  * in /usr/share/doc/bind-* for more details.
  * Online versions of the documentation can be found here:
  * https://kb.isc.org/article/AA-01031
+ * https://bind9.readthedocs.io/en/stable/
  *
  * If you are going to set up an authoritative server, make sure you
  * understand the hairy details of how DNS works. Even with simple mistakes,
  * you can break connectivity for affected parties, or cause huge amounts of
  * useless Internet traffic.
  */
-{% for blck in bind9_config_blocks %}
 
-{{ blck.name }} {
-{% if blck.name == "acl" %}
-{% elif blck.name == "controls" %}
-{% elif blck.name == "dnssec-policy" %}
-{% elif blck.name == "key" %}
-{% elif blck.name == "key-store" %}
-{% elif blck.name == "logging" %}
-{% elif blck.name == "masters" or blck.name == "primaries" %}
-{% elif blck.name == "options" %}
-{% elif blck.name == "parental-agents" %}
-{% elif blck.name == "server" %}
-{% elif blck.name == "statistics-channels" %}
-{% elif blck.name == "tls" %}
-{% elif blck.name == "http" %}
-{% elif blck.name == "trust-anchors" %}
-{% elif blck.name == "managed-keys" %}
-{% elif blck.name == "view" %}
-{% elif blck.name == "zone" %}
-{% else %}
-This is unknown {{ blck.name }}.
+{# include "filename"; #}
+{% if bind9_config_includes is defined and bind9_config_includes | length > 0 %}
+{% for include_file in bind9_config_includes %}
+include "{{ include_file }}";
+{% endfor %}
 {% endif %}
+
+{# Defines a named IP address matching list, for access control and other uses. #}
+{% if bind9_config_acl is defined and bind9_config_acl | length > 0 %}
+{% for acl in bind9_config_acl %}
+acl "{{ acl.name }}" {
+{% if acl.comment is defined and acl.comment | length > 0 %}
+	{{ acl.comment }}
+{% endif %}
+{% for netcode in acl.values %}
+	{{ netcode }};
+{% endfor %}
 }
 {% endfor %}
+{% endif %}
+
+{# Declares control channels to be used by the rndc utility. #}
+{% if bind9_config_controls is defined and bind9_config_controls | length > 0 %}
+controls {
+{% for ctrl in bind9_config_controls %}
+	inet ctrl.addr{% if ctrl.port is defined -%}
+	port {{ ctrl.port }}{%- endif %} allow { {{ ctrl.allow }} }{% if ctrl.keys is defined -%}
+	keys { {{ ctrl.keys }} }{% endif -%}
+	{% if ctrl.read-only is defined -%} read-only {{ ctrl.read-only }}{%- endif %};
+{% endfor %}
+}
+{% endif %}
+
+{# Describes a DNSSEC key and signing policy for zones. See dnssec-policy for details. #}
+{% if bind9_config_dnssec_policy is defined and bind9_config_dnssec_policy | length > 0 %}
+{% for dnspolicy in bind9_config_dnssec_policy %}
+dnssec-policy "{{ dnspolicy.name }}" {
+{% for  in %}
+{% endfor %}
+}
+{% endfor %}
+{% endif %}
+
+{# Specifies key information for use in authentication and authorization using TSIG. #}
+{% if bind9_config_key is defined and bind9_config_key | length > 0 %}
+{% for dnskey in bind9_config_key %}
+key "{{ dnskey.name }}" {
+{% for  in %}
+	algorithm "{{ dnskey.algorithm }}";
+	secret "{{ dnskey.secret }}";
+{% endfor %}
+}
+{% endfor %}
+{% endif %}
+
+{% if bind9_config_key_store is defined and bind9_config_key_store | length > 0 %}
+ {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+{% if bind9_config_logging is defined and bind9_config_logging | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+{% if (bind9_config_masters is defined and bind9_config_masters | length > 0) or 
+      (bind9_config_primaries is defined and bind9_config_primaries | length > 0) %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_options: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_parental_agents: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_server: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_statistics_channels: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_tls: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_http: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_trust_anchors: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_managed_keys: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_trusted_keys: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_view: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+bind9_config_zones: {}
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
+
+{% if  is defined and | length > 0 %}
+  {
+{% for  in %}
+{% endfor %}
+}
+{% endif %}
